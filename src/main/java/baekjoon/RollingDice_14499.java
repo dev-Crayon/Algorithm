@@ -1,178 +1,94 @@
 package baekjoon;
 
 import java.io.*;
-import java.util.Arrays;
+import java.util.*;
 
 public class RollingDice_14499 {
+    static int N, M, x, y, K;
+    static int[][] map;
+    static int[] dice = new int[6]; // 0: top, 1: north, 2: bottom, 3: south, 4: west, 5: east
 
-    private static int N;
-    private static int M;
-    private static int K;
-    private static int startX;
-    private static int startY;
-
-    private static int[][] map;
-    private static int[] dice;
-    private static int diceTop = 1;
-
-    private static void moveDice(int direction, int goalX, int goalY) {
-        boolean isZero = map[goalX][goalY] == 0;
-
-        switch (direction) {
-            // 동쪽
-            case 1:
-                if (diceTop == 1 || diceTop == 2 || diceTop == 5 || diceTop == 6) {
-                    if (isZero) map[goalX][goalY] = dice[2];
-                    else dice[2] = map[goalX][goalY];
-                    diceTop = 4;
-                    break;
-                }
-
-                if (diceTop == 4) {
-                    if (isZero) map[goalX][goalY] = dice[0];
-                    else dice[0] = map[goalX][goalY];
-                    diceTop = 6;
-                    break;
-                }
-
-                if (diceTop == 3) {
-                    if (isZero) map[goalX][goalY] = dice[5];
-                    else dice[5] = map[goalX][goalY];
-                    diceTop = 1;
-                    break;
-                }
-            // 서쪽
-            case 2:
-                if (diceTop == 1 || diceTop == 2 || diceTop == 5 || diceTop == 6) {
-                    if (isZero) map[goalX][goalY] = dice[3];
-                    else dice[3] = map[goalX][goalY];
-                    diceTop = 3;
-                    break;
-                }
-
-                if (diceTop == 4) {
-                    if (isZero) map[goalX][goalY] = dice[5];
-                    else dice[5] = map[goalX][goalY];
-                    diceTop = 1;
-                    break;
-                }
-
-                if (diceTop == 3) {
-                    if (isZero) map[goalX][goalY] = dice[0];
-                    else dice[0] = map[goalX][goalY];
-                    diceTop = 6;
-                    break;
-                }
-            // 북쪽
-            case 3:
-                if (diceTop == 1 || diceTop == 3 || diceTop == 4) {
-                    if (isZero) map[goalX][goalY] = dice[1];
-                    else dice[1] = map[goalX][goalY];
-                    diceTop = 5;
-                    break;
-                }
-
-                if (diceTop == 2) {
-                    if (isZero) map[goalX][goalY] = dice[5];
-                    else dice[5] = map[goalX][goalY];
-                    diceTop = 1;
-                    break;
-                }
-
-                if (diceTop == 5) {
-                    if (isZero) map[goalX][goalY] = dice[0];
-                    else dice[0] = map[goalX][goalY];
-                    diceTop = 6;
-                    break;
-                }
-
-                if (diceTop == 6) {
-                    if (isZero) map[goalX][goalY] = dice[4];
-                    else dice[4] = map[goalX][goalY];
-                    diceTop = 2;
-                    break;
-                }
-            // 남쪽
-            case 4:
-                if (diceTop == 1 || diceTop == 3 || diceTop == 4) {
-                    if (isZero) map[goalX][goalY] = dice[4];
-                    else dice[4] = map[goalX][goalY];
-                    diceTop = 2;
-                    break;
-                }
-
-                if (diceTop == 2) {
-                    if (isZero) map[goalX][goalY] = dice[0];
-                    else dice[0] = map[goalX][goalY];
-                    diceTop = 6;
-                    break;
-                }
-
-                if (diceTop == 5) {
-                    if (isZero) map[goalX][goalY] = dice[5];
-                    else dice[5] = map[goalX][goalY];
-                    diceTop = 1;
-                    break;
-                }
-
-                if (diceTop == 6) {
-                    if (isZero) map[goalX][goalY] = dice[1];
-                    else dice[1] = map[goalX][goalY];
-                    diceTop = 5;
-                    break;
-                }
-        }
-    }
+    // 동 서 북 남
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {1, -1, 0, 0};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int[] input = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        N = input[0];
-        M = input[1];
-        startX = input[2];
-        startY = input[3];
-        K = input[4];
-        map = new int[N][M];
-        dice = new int[6];
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        x = Integer.parseInt(st.nextToken());
+        y = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+
+        map = new int[N][M];
         for (int i = 0; i < N; i++) {
-            map[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
         }
 
-        // 명령 실행
-        input = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        for (int command = 0; command < input.length; command++) {
-            int direction = input[command];
-            int nextX = startX;
-            int nextY = startY;
-            if (direction == 1) {
-                nextY++;
+        st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < K; i++) {
+            int dir = Integer.parseInt(st.nextToken()) - 1;
+            int nx = x + dx[dir];
+            int ny = y + dy[dir];
+
+            // 범위 밖이면 무시
+            if (nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+
+            roll(dir);
+            x = nx;
+            y = ny;
+
+            if (map[x][y] == 0) {
+                map[x][y] = dice[2];
+            } else {
+                dice[2] = map[x][y];
+                map[x][y] = 0;
             }
 
-            if (direction == 2) {
-                nextY--;
-            }
+            sb.append(dice[0]).append("\n"); // 윗면 출력
+        }
 
-            if (direction == 3) {
-                nextX--;
-            }
+        System.out.print(sb);
+    }
 
-            if (direction == 4) {
-                nextX++;
-            }
-
-            System.out.println("X: " + startX + ", Y: " + startY);
-
-            // 지도를 벗어난 경우 명령 무시
-            if (nextX < 0 || nextX >= N || nextY < 0 || nextY >= M) continue;
-            startX = nextX;
-            startY = nextY;
-
-            moveDice(direction, startX, startY);
-            System.out.println(Arrays.toString(dice));
-            System.out.println(diceTop);
-            System.out.println(dice[diceTop - 1]);
-            System.out.println("---------------------");
+    // 주사위 회전
+    static void roll(int dir) {
+        int temp;
+        switch (dir) {
+            case 0: // 동쪽
+                temp = dice[0];
+                dice[0] = dice[4];
+                dice[4] = dice[2];
+                dice[2] = dice[5];
+                dice[5] = temp;
+                break;
+            case 1: // 서쪽
+                temp = dice[0];
+                dice[0] = dice[5];
+                dice[5] = dice[2];
+                dice[2] = dice[4];
+                dice[4] = temp;
+                break;
+            case 2: // 북쪽
+                temp = dice[0];
+                dice[0] = dice[3];
+                dice[3] = dice[2];
+                dice[2] = dice[1];
+                dice[1] = temp;
+                break;
+            case 3: // 남쪽
+                temp = dice[0];
+                dice[0] = dice[1];
+                dice[1] = dice[2];
+                dice[2] = dice[3];
+                dice[3] = temp;
+                break;
         }
     }
 }
