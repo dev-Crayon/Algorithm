@@ -1,63 +1,70 @@
 package baekjoon;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class SetExpression_1717 {
 
-    private static int N;
-    private static int M;
-    private static int[] parent;
-    private static int[] size;
+    static int n, m;
+    static int[] parents;
+    static int[] size;
 
-    private static boolean union(int x, int y) {
-        x = find(x);
-        y = find(y);
+    static void union(int a, int b) {
+        a = find(a);
+        b = find(b);
 
-        if (x == y) return false;
-
-        if (size[x] < size[y]) {
-            parent[x] = y;
-            size[y] += size[x];
-        } else {
-            parent[y] = x;
-            size[x] += size[y];
+        if (a == b) {
+            return;
         }
 
-        return true;
+        // 사이즈가 더 작은쪽이 이동
+        if (size[a] < size[b]) {
+            parents[a] = b;
+            size[b] += size[a];
+        } else {
+            parents[b] = a;
+            size[a] += size[b];
+        }
     }
 
-    private static int find(int x) {
-        while (parent[x] != x) {
-            parent[x] = parent[parent[x]];
-            x = parent[x];
+    static int find(int a) {
+        while (parents[a] != a) {
+            parents[a] = parents[parents[a]];
+            a = parents[a];
         }
 
-        return x;
+        return a;
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(br.readLine());
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        parent = new int[N + 1];
-        size = new int[N + 1];
-        for (int i = 0; i <= N; i++) {
-            parent[i] = i;
+        parents = new int[n + 1];
+        size = new int[n + 1];
+        for (int i = 0; i < parents.length; i++) {
+            parents[i] = i;
             size[i] = 1;
         }
 
-        for (int i = 0; i < M; i++) {
+        for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
             int operation = Integer.parseInt(st.nextToken());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
+
+            // 유니온 연산
             if (operation == 0) {
                 union(a, b);
-            } else {
+            }
+
+            // 파인드 연산
+            if (operation == 1) {
                 int aParent = find(a);
                 int bParent = find(b);
                 if (aParent == bParent) {
