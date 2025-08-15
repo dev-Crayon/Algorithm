@@ -7,19 +7,20 @@ import java.util.Arrays;
 
 public class RGBDistance_1149 {
 
-    private static int N;
-    private static int[][] colorPrice;
-    private static int[][] dp;
+    static int N;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         N = Integer.parseInt(br.readLine());
-        dp = new int[N + 1][3];
-        for (int i = 1; i <= N; i++) {
-            int[] colorPrice = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-            dp[i][0] = colorPrice[0];
-            dp[i][1] = colorPrice[1];
-            dp[i][2] = colorPrice[2];
+        int[][] dp = new int[N + 1][3];
+
+        // 집 색칠 비용 입력
+        for (int i = 0; i < N; i++) {
+            int[] colorCost = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            dp[i][0] = colorCost[0];
+            dp[i][1] = colorCost[1];
+            dp[i][2] = colorCost[2];
         }
 
         for (int i = 1; i <= N; i++) {
