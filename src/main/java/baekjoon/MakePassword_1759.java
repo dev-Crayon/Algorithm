@@ -1,66 +1,51 @@
 package baekjoon;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MakePassword_1759 {
 
-    private static int L;
-    private static int C;
-    private static Set<String> answer = new HashSet<>();
+    static int L, C;
+    static String[] cand;     // 후보 문자들(정렬됨)
+    static String[] seq;      // 현재까지 만든 암호
+    static StringBuilder sb = new StringBuilder();
 
-    // 모든 조합 구하기
-    private static void comb(List<String> alphabetList, boolean[] selected, int r, int start) {
-        // 다 뽑았다면
-        if (r == 0) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < selected.length; i++) {
-                if (selected[i]) sb.append(alphabetList.get(i));
+    static boolean isVowel(char c) {
+        return c=='a' || c=='e' || c=='i' || c=='o' || c=='u';
+    }
+
+    static void dfs(int start, int depth, int vowelCnt, int consonantCnt) {
+        if (depth == L) {
+            if (vowelCnt >= 1 && consonantCnt >= 2) {
+                for (int i = 0; i < L; i++) sb.append(seq[i]);
+                sb.append('\n');
             }
-            if (isCorrectPassword(sb.toString())) {
-                answer.add(sb.toString());
-                return;
-            }
+            return;
         }
 
-        // 아직 뽑아야 한다면
-        for (int i = start; i < alphabetList.size(); i++) {
-            selected[i] = true;
-            comb(alphabetList, selected, r - 1, i + 1);
-            selected[i] = false;
+        for (int i = start; i < C; i++) {
+            char ch = cand[i].charAt(0);
+            seq[depth] = cand[i];
+            if (isVowel(ch)) {
+                dfs(i + 1, depth + 1, vowelCnt + 1, consonantCnt);   // ✅ i+1로 진행
+            } else {
+                dfs(i + 1, depth + 1, vowelCnt, consonantCnt + 1);   // ✅ i+1로 진행
+            }
         }
     }
 
-    // 최소 한 개의 모음, 최소 두 개의 자음으로 구성되었는지 확인
-    private static boolean isCorrectPassword(String password) {
-        int consonantCount = 0;
-        int vowelCount = 0;
-        Set<Character> vowels = Set.of('a', 'e', 'i', 'o', 'u');
-
-        for (char ch : password.toCharArray()) {
-            if (vowels.contains(ch)) vowelCount++;
-            else consonantCount++;
-        }
-
-        return vowelCount >= 1 && consonantCount >= 2;
-    }
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         L = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
 
-        List<String> alphabetList = Arrays.stream(br.readLine().split(" ")).sorted().collect(Collectors.toList());
-        comb(alphabetList, new boolean[C], L, 0);
-        List<String> sortedAnswer = new ArrayList<>(new ArrayList<>(answer));
-        Collections.sort(sortedAnswer);
+        cand = br.readLine().trim().split(" ");
+        Arrays.sort(cand);                // 사전순 요구
+        seq = new String[L];
 
-        for (String s : sortedAnswer) {
-            System.out.println(s);
-        }
+        dfs(0, 0, 0, 0);
+        System.out.print(sb.toString());
     }
 }
