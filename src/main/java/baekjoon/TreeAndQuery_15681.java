@@ -3,16 +3,10 @@ package baekjoon;
 import java.io.*;
 import java.util.*;
 
-/**
- * BOJ 15681 트리와 쿼리
- * - 메모리 절약: Node 객체/HashMap 제거, ArrayList[] 인접리스트 사용
- * - 속도 개선: 서브트리 크기 한 번만 계산, 쿼리는 O(1)
- * - 안전성: 비재귀(post-order)로 스택오버플로 방지
- */
 public class TreeAndQuery_15681 {
 
     static int N, R, Q;
-    static List<List<Integer>> linkedNode; // 기존 이름 유지, 타입만 ArrayList[] 로
+    static List<List<Integer>> linkedNode;
     static int[] parent;
     static int[] size;
 
@@ -38,7 +32,6 @@ public class TreeAndQuery_15681 {
         parent = new int[N + 1];
         size = new int[N + 1];
 
-        // 1) 루트 R에서 부모/방문 순서 구하기 (전위 순회 순서 저장)
         int[] order = new int[N];
         int idx = 0;
         Deque<Integer> stack = new ArrayDeque<>();
@@ -54,7 +47,6 @@ public class TreeAndQuery_15681 {
             }
         }
 
-        // 2) 후위 순회로 size 계산: 뒤에서부터 부모로 누적
         for (int i = N - 1; i >= 0; i--) {
             int u = order[i];
             int subtotal = 1; // 자신 포함
@@ -65,7 +57,6 @@ public class TreeAndQuery_15681 {
             size[u] = subtotal;
         }
 
-        // 3) 쿼리 처리: O(1)
         for (int i = 0; i < Q; i++) {
             int u = Integer.parseInt(br.readLine());
             sb.append(size[u]).append('\n');
