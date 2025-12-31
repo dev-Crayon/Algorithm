@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class NeedFriend {
+public class NeedFriend_21736 {
 
     static String[][] university;
     static boolean[][] visited;
